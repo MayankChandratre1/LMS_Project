@@ -3,6 +3,16 @@ import bcrypt from 'bcryptjs'
 import JWT from 'jsonwebtoken'
 import crypto from 'crypto'
 
+const chat = new Schema({
+    text: String,
+    response: String,
+    isUser: Boolean,
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+})
+
 const userSchema = new Schema({
     name: {
         type: String,
@@ -45,7 +55,10 @@ const userSchema = new Schema({
     subscription: {
         id: String,
         status: String
-    }
+    },
+    chatHistory: [{
+        type: chat,
+    }]
 }, { timestamps: true })
 
 userSchema.pre('save', async function (next) {

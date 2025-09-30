@@ -23,6 +23,7 @@ import Checkout from './pages/payments/Checkout'
 import CheckoutFail from './pages/payments/CheckoutFail'
 import CheckoutSuccess from './pages/payments/CheckoutSuccess'
 import Profile from './pages/user/Profile'
+import Chat from './pages/chat/Chat'
 function App() {
   const location = useLocation();
   useEffect(() => {
@@ -90,6 +91,7 @@ function App() {
           <Route path='/course/:name/checkout/success' element={<CheckoutSuccess />} />
           <Route path='/course/:name/checkout/fail' element={<CheckoutFail />} />
           <Route path='/course/:name/:id/lectures' element={<CourseLectures />} />
+          <Route path='/chat' element={<Chat />} />
         </Route>
       </Routes>
     </>
