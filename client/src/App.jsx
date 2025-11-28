@@ -24,6 +24,14 @@ import CheckoutFail from './pages/payments/CheckoutFail'
 import CheckoutSuccess from './pages/payments/CheckoutSuccess'
 import Profile from './pages/user/Profile'
 import Chat from './pages/chat/Chat'
+import CreateQuiz from './pages/quiz/CreateQuiz'
+import UpdateQuiz from './pages/quiz/UpdateQuiz'
+import QuizList from './pages/quiz/QuizList'
+import QuizPerCourse from './pages/quiz/user/QuizPerCourse'
+import TakeQuiz from './pages/quiz/user/TakeQuiz'
+import MySubmissions from './pages/quiz/user/MySubmissions'
+import SubmissionsByQuiz from './pages/quiz/user/SubmissionsByQuiz'
+import SubmissionDetails from './pages/quiz/user/SubmissionDetails'
 function App() {
   const location = useLocation();
   useEffect(() => {
@@ -82,6 +90,9 @@ function App() {
           <Route path='/course/:name/:id/editCourse' element={<EditCourse />} />
           <Route path='/course/:name/:id/lectures/addlecture' element={<AddCourseLecture />} />
           <Route path='/course/:name/:id/lectures/editlecture' element={<EditCourseLecture />} />
+          <Route path='/course/:name/:id/quizes' element={<QuizList />} />
+          <Route path='/course/:name/:id/quizes/add' element={<CreateQuiz />} />
+          <Route path='/admin/:name/:courseId/quizes/:quizId' element={<UpdateQuiz />} />
           <Route path='/admin/dashboard' element={<AdminDashboard />} />
         </Route>
         <Route element={<RequiredAuth allowedRole={["ADMIN", "USER"]} />}>
@@ -91,6 +102,11 @@ function App() {
           <Route path='/course/:name/checkout/success' element={<CheckoutSuccess />} />
           <Route path='/course/:name/checkout/fail' element={<CheckoutFail />} />
           <Route path='/course/:name/:id/lectures' element={<CourseLectures />} />
+          <Route path='/course/:name/:id/quizes/view' element={<QuizPerCourse />} />
+          <Route path='/course/:name/:id/quizes/:quizId/take' element={<TakeQuiz />} />
+          <Route path='/profile/submissions' element={<MySubmissions />} />
+          <Route path='/profile/submissions/quiz/:quizId' element={<SubmissionsByQuiz />} />
+          <Route path='/profile/submissions/:submissionId' element={<SubmissionDetails />} />
           <Route path='/chat' element={<Chat />} />
         </Route>
       </Routes>

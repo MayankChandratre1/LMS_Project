@@ -3,6 +3,7 @@ import createError from '../utils/error.js'
 import { v2 } from 'cloudinary'
 import fs from 'fs/promises'
 import { myCache } from '../app.js';
+import Progress from '../models/progressModel.js'
 
 export const getAllCourses = async (req, res, next) => {
     try {
@@ -158,8 +159,10 @@ export const deleteCourse = async (req, res, next) => {
 export const getLectures = async (req, res, next) => {
     try {
         const { id } = req.params;
+        const userId = req.user?.id; // Check if user is logged in
+        
         let lectures;
-        if (myCache.has("lectures")) {
+        if (false) {
             lectures = JSON.parse(myCache.get("lectures"));
         } else {
             const course = await Course.findById(id);
@@ -169,6 +172,26 @@ export const getLectures = async (req, res, next) => {
             lectures = course.lectures
             myCache.set("lectures", JSON.stringify(lectures));
         }
+
+        // Create progress if user is logged in and not already enrolled
+        if (userId) {
+            let progress = await Progress.findOne({ userId, courseId: id })
+            if (!progress) {
+                const course = await Course.findById(id)
+                progress = new Progress({
+                    userId,
+                    courseId: id,
+                    lectureProgress: course.lectures.map(lecture => ({
+                        lectureId: lecture._id,
+                        title: lecture.title,
+                        completed: false,
+                        timeSpent: 0
+                    }))
+                })
+                await progress.save()
+            }
+        }
+
         return res.status(200).json({
             success: true,
             message: "Lectures fetched successfully",

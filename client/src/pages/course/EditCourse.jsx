@@ -100,7 +100,16 @@ function EditCourse() {
                         <label className='font-semibold text-white text-xl' htmlFor="description">Course Description</label>
                         <textarea type="text" name='description' id='description' value={userInput.description} onChange={handleChange} placeholder="Type here" className="textarea textarea-accent resize-y min-h-16 w-full text-white " />
                     </div>
-                    <button type='submit' className='btn btn-primary'>Confirm</button>
+                    <div className="flex justify-between items-center">
+                        <button type='submit' className='btn btn-primary'>Confirm</button>
+                        <button
+                            type="button"
+                            onClick={() => navigate(`/course/${state?.title}/${state?.id}/quizes`, { state })}
+                            className="btn btn-secondary"
+                        >
+                            Manage Quizzes
+                        </button>
+                    </div>
                 </div>
             </form>
         </HomeLayout>

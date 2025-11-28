@@ -6,8 +6,11 @@ import userRoutes from './routes/userRoutes.js'
 import courseRoutes from './routes/courseRoutes.js'
 import paymentRoutes from './routes/paymentRoutes.js'
 import chatRoutes from './routes/aiRoutes.js'
+import progressRoutes from './routes/progressRoutes.js'
+import quizRoutes from './routes/quizRoutes.js'
 import miscRoutes from './routes/miscellaneousRoutes.js'
 import errorMiddleware from './middleware/errorMiddleware.js'
+import quizSubmissionRoutes from './routes/quizSubmisionRoutes.js'
 import NodeCache from 'node-cache'
 
 dotenv.config()
@@ -24,7 +27,10 @@ app.use(cors({
 app.use("/api/v1/user", userRoutes)
 app.use("/api/v1/course", courseRoutes)
 app.use("/api/v1/payments", paymentRoutes)
+app.use("/api/v1/progress", progressRoutes)
 app.use("/api/v1/ai", chatRoutes)
+app.use("/api/v1/quiz", quizRoutes)
+app.use("/api/v1/quiz-submission", quizSubmissionRoutes)
 app.use("/api/v1", miscRoutes)
 
 app.use("/ping", (req, res) => {

@@ -13,6 +13,11 @@ const paymentSchema = new Schema({
         type: String,
         required: true
     },
+    courseId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Course',
+        required: true
+    }
 
 }, { timestamps: true })
 
