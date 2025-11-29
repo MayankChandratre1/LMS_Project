@@ -5,8 +5,13 @@ The Learning Management System (LMS) is a full-featured web application designed
 
 ## Technologies Used
 (As referenced from the package.json files)
-- **Backend**: Node.js, Express.js, MongoDB (via Mongoose), Razorpay, Cloudinary, bcryptjs, jsonwebtoken, multer, nodemailer
-- **Frontend**: React, Redux Toolkit, Axios, Tailwind CSS, DaisyUI
+- **Backend**: Node.js, Express.js, MongoDB (via Mongoose), Razorpay, Cloudinary, bcryptjs, jsonwebtoken, multer, nodemailer, dotenv, cookie-parser, cors, node-cache, serverless-http
+- **Frontend**: React, React DOM, React Router DOM, Redux Toolkit, React Redux, Axios, Tailwind CSS, DaisyUI, Vite
+- **Additional Libraries**:
+  - UI & UX: react-icons, lottie-react, react-tsparticles, tsparticles
+  - Charts & Analytics: chart.js, react-chartjs-2
+  - Notifications & Utilities: react-toastify, js-cookie, eslint-plugin-simple-import-sort
+  - Forms/Email: @emailjs/browser
 
 ## Features
 (Refer to README.md) TODO: ( Add Screenshots for each feature from deployed app )
@@ -16,6 +21,19 @@ The Learning Management System (LMS) is a full-featured web application designed
 - **Subscription Management**: Purchase and verify subscriptions via Razorpay.
 - **Responsive Design**: Modern, interactive UI featuring particle backgrounds and glassmorphism effects.
 - **Dashboards**: Separate interfaces for administrators and general users.
+- **AI Assistant**: A context-aware learning assistant that:
+  - Generates personalized learning roadmaps with step-wise topics, estimated hours per step, and total duration.
+  - Searches the platform catalog and recommends courses with pricing, category, and lecture count when available.
+  - Answers general study-related questions in a friendly tone with safety hints for code-specific queries.
+  - Provides interactive responses (e.g., roadmap steps, course cards) and supports quick prompts to help users start faster.
+- **Quizzes**: Course-specific quizzes managed by admins:
+  - Admins can create, edit, and delete quizzes for any course.
+  - Learners can take quizzes, submit answers, and view submission history.
+  - Progress tracking includes question count, timestamps, and status indicators for attempts.
+- **Progress Dashboard**: A tailored learning dashboard for users:
+  - Aggregates enrolled, completed, and in-progress courses with dedicated stat cards.
+  - Displays total time spent learning (minutes) and recent course activity.
+  - Shows per-course progress bars, completion badges, and quick navigation to resume learning.
 
 ## Authentication
 (See authMiddleware.js, userController.js, AxiosInstance.js)
@@ -44,7 +62,7 @@ The project demonstrates a comprehensive LMS solution that effectively integrate
 - **Future Enhancements**:
   - Incorporate real-time features like live classes and interactive assessments.
   - Expand subscription and pricing models to support multiple tiers and discount options.
-  - Enhance reporting and analytical dashboards for instructors and admins.
+  - Enhance reporting and analytical dashboards for instructors and admins (deeper charts via chart.js/react-chartjs-2).
   - Improve accessibility and add multilingual support (i18n).
 - **Challenges**:
   - Ensuring end-to-end security, especially in authentication and payment verification.
