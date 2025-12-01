@@ -12,11 +12,6 @@ const paymentSchema = new Schema({
     razorpay_signature: {
         type: String,
         required: true
-    },
-    courseId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Course',
-        required: true
     }
 
 }, { timestamps: true })

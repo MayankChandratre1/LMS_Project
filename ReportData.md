@@ -1,4 +1,4 @@
-# Learning Management System — Project Report
+code # Learning Management System — Project Report
 
 ## Abstract
 The Learning Management System (LMS) is a full-featured web application designed to provide a seamless online learning experience. Developed using the MERN stack with Tailwind CSS and DaisyUI for styling, the platform enables users to access a variety of courses, participate in engaging lectures, and manage subscriptions securely. With robust authentication, media handling via Cloudinary, and subscription management through Razorpay, the LMS meets the needs of learners, educators, and administrators.
