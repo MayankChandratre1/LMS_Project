@@ -12,6 +12,7 @@ import miscRoutes from './routes/miscellaneousRoutes.js'
 import errorMiddleware from './middleware/errorMiddleware.js'
 import quizSubmissionRoutes from './routes/quizSubmisionRoutes.js'
 import NodeCache from 'node-cache'
+import forumThreadRoutes from './routes/forumThreadRoutes.js' // Add this import
 
 dotenv.config()
 const app = express()
@@ -32,6 +33,7 @@ app.use("/api/v1/ai", chatRoutes)
 app.use("/api/v1/quiz", quizRoutes)
 app.use("/api/v1/quiz-submission", quizSubmissionRoutes)
 app.use("/api/v1", miscRoutes)
+app.use('/api/v1/forum', forumThreadRoutes) // Add this line
 
 app.use("/ping", (req, res) => {
     res.send("Server is working")

@@ -32,6 +32,11 @@ import TakeQuiz from './pages/quiz/user/TakeQuiz'
 import MySubmissions from './pages/quiz/user/MySubmissions'
 import SubmissionsByQuiz from './pages/quiz/user/SubmissionsByQuiz'
 import SubmissionDetails from './pages/quiz/user/SubmissionDetails'
+import ForumPage from './pages/forum/ForumPage'
+import MyThreads from './pages/forum/MyThreads'
+import AddNewThread from './pages/forum/AddNewThread'
+import ThreadDetails from './pages/forum/ThreadDetails'
+
 function App() {
   const location = useLocation();
   useEffect(() => {
@@ -60,6 +65,16 @@ function App() {
         document.title = 'Profile - Learning Management System';
       } else if (path === '/profile/changePassword') {
         document.title = 'Change Password - Learning Management System';
+      } else if (path === '/forum') {
+        document.title = 'Forum - Learning Management System';
+      } else if (path === '/forum/my-threads') {
+        document.title = 'My Threads - Learning Management System';
+      } else if (path === '/forum/new') {
+        document.title = 'Create Thread - Learning Management System';
+      } else if (path.startsWith('/forum/thread/')) {
+        document.title = 'Thread Details - Learning Management System';
+      } else if (path === '/chat') {
+        document.title = 'AI Chat - Learning Management System';
       }
     };
 
@@ -85,6 +100,11 @@ function App() {
 
         <Route path='/courses' element={<CourseList />} />
         <Route path='/course/description' element={<CourseDescription />} />
+        
+        {/* Forum Routes - Public access */}
+        <Route path='/forum' element={<ForumPage />} />
+        <Route path='/forum/thread/:id' element={<ThreadDetails />} />
+        
         <Route element={<RequiredAuth allowedRole={["ADMIN"]} />}>
           <Route path='/course/create' element={<CreateCourse />} />
           <Route path='/course/:name/:id/editCourse' element={<EditCourse />} />
@@ -95,6 +115,7 @@ function App() {
           <Route path='/admin/:name/:courseId/quizes/:quizId' element={<UpdateQuiz />} />
           <Route path='/admin/dashboard' element={<AdminDashboard />} />
         </Route>
+        
         <Route element={<RequiredAuth allowedRole={["ADMIN", "USER"]} />}>
           <Route path='/profile' element={<Profile />} />
           <Route path='/profile/changePassword' element={<ChangePassword />} />
@@ -108,6 +129,10 @@ function App() {
           <Route path='/profile/submissions/quiz/:quizId' element={<SubmissionsByQuiz />} />
           <Route path='/profile/submissions/:submissionId' element={<SubmissionDetails />} />
           <Route path='/chat' element={<Chat />} />
+          
+          {/* Forum Routes - Authenticated users */}
+          <Route path='/forum/my-threads' element={<MyThreads />} />
+          <Route path='/forum/new' element={<AddNewThread />} />
         </Route>
       </Routes>
     </>

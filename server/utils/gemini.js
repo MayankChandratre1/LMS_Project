@@ -59,3 +59,69 @@ export async function sendRequest(prompt) {
   }
 }
 
+export async function generateForumAnswer(threadContext) {
+  try {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY is not set in environment variables");
+    }
+
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    });
+
+    const config = {
+      thinkingConfig: {
+        thinkingBudget: 0,
+      },
+      systemInstruction: [
+        {
+          text: `You are an expert AI assistant for a Learning Management System (LMS) forum. Your role is to provide helpful, accurate, and educational responses to student questions. 
+
+Guidelines:
+1. Be professional, friendly, and encouraging
+2. Provide detailed explanations with examples when appropriate
+3. If the question is about code, provide code snippets with explanations
+4. If you're not certain about something, acknowledge it and provide resources for further learning
+5. Keep responses focused on education and learning
+6. If the question is unclear, ask clarifying questions
+7. Keep it plain text without any HTML/Markdown tags under 6000 characters
+
+Context provided:
+- Thread title and content
+- Course information (if linked)
+- Previous replies (for continuity)
+- Category of the thread
+
+Your response should be comprehensive yet concise, directly addressing the question while providing educational value.`,
+        }
+      ],
+    };
+
+    const model = 'gemini-flash-lite-latest';
+    const contents = [
+      {
+        role: 'user',
+        parts: [
+          {
+            text: threadContext,
+          },
+        ],
+      },
+    ];
+
+    const response = await ai.models.generateContentStream({
+      model,
+      config,
+      contents,
+    });
+
+    let responseText = '';
+    for await (const chunk of response) {
+      responseText += chunk.text;
+    }
+    return responseText.trim();
+  } catch (err) {
+    throw new Error("Error in Gemini API: " + err.message);
+  }
+}
+

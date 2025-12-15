@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { FaBook, FaClock, FaTrophy, FaPlay, FaCheckCircle } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import Footer from '../../components/Footer';
 import { getDashboardData } from "../../redux/slices/ProgressSlice";
@@ -27,6 +27,15 @@ function Dashboard() {
                     <p className="text-gray-400 text-lg">
                         Continue your learning journey and track your progress
                     </p>
+                </div>
+
+                {/* Header Actions - Added My Threads button */}
+                <div className="flex justify-between items-center mb-8">
+                    <div className="flex gap-3">
+                        <Link to="/profile" className="px-4 py-2 rounded-lg bg-gray-800/50 text-white">Profile</Link>
+                        <Link to="/courses" className="px-4 py-2 rounded-lg bg-yellow-500 text-black">Browse Courses</Link>
+                        <Link to="/forum/my-threads" className="px-4 py-2 rounded-lg bg-blue-500 text-white">My Threads</Link>
+                    </div>
                 </div>
 
                 {/* Stats Cards */}

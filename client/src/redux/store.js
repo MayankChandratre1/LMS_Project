@@ -6,6 +6,7 @@ import LectureSlice from './slices/LectureSlice'
 import RazorpaySlice from './slices/RazorpaySlice'
 import StatSlice from './slices/StatSlice'
 import ChatSlice from './slices/ChatSlice'
+import ForumSlice from './slices/ForumSlice' // Add this import
 import progressSliceReducer from './slices/ProgressSlice'
 import quizSliceReducer from './slices/QuizSlice'
 import quizSubmissionsSliceReducer from './slices/QuizSubmissionsSlice'
@@ -20,6 +21,7 @@ const store = configureStore({
         lecture: LectureSlice,
         stat: StatSlice,
         chat: ChatSlice,
+        forum: ForumSlice, // Add this line
         progress: progressSliceReducer,
         quiz: quizSliceReducer,
         quizSubmissions: quizSubmissionsSliceReducer,

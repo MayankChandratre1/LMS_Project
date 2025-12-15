@@ -61,6 +61,7 @@ function HomeLayout({ children }) {
                         )}
                         <li><Link to={'/'}>Home</Link></li>
                         <li><Link to={'/courses'}>All Courses</Link></li>
+                        <li><Link to={'/forum'}>Forum</Link></li>
                         <li><Link to={'/contact'}>Contact Us</Link></li>
                         <li><Link to={'/about'}>About Us</Link></li>
                         {!isLoggedIn && (
@@ -81,7 +82,7 @@ function HomeLayout({ children }) {
                             <>
                                 <li>
                                     <Link to={'/chat'} className='w-full'>
-                                        Chat
+                                        AI Chat
                                     </Link>
                                 </li>
                                 <li>
@@ -123,28 +124,11 @@ function HomeLayout({ children }) {
                             <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
                         </div>
                         
-                        {/* Notification Badge (optional - you can add unread count here) */}
+                        {/* Notification Badge */}
                         {isLoggedIn && (
                             <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
                         )}
                     </button>
-                    
-                    {/* Alternative floating chat bubble design */}
-                    {/* Uncomment this section if you prefer a chat bubble style
-                    <div className="relative">
-                        <button
-                            onClick={handleChatNavigation}
-                            className="group bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black px-4 py-3 rounded-full shadow-2xl hover:shadow-yellow-500/30 transition-all duration-300 flex items-center gap-2"
-                        >
-                            <FaComments className="text-xl" />
-                            <span className="font-semibold text-sm">Ask AI</span>
-                        </button>
-                        
-                        <div className="absolute bottom-full right-0 mb-3 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                            {isLoggedIn ? 'Get instant help from our AI tutor' : 'Login to access AI chat'}
-                        </div>
-                    </div>
-                    */}
                 </div>
             )}
             
