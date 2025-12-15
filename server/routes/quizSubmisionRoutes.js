@@ -18,7 +18,7 @@ router.get('/user', isLoggedIn, getUserSubmissions)
 // Get all submissions for a specific quiz (only instructors/admins)
 router.get('/quiz/:quizId', isLoggedIn, authorizedRole('INSTRUCTOR', 'ADMIN'), getQuizSubmissions)
 
-// Get a specific submission by ID (only instructors/admins)
-router.get('/:submissionId', isLoggedIn, authorizedRole('INSTRUCTOR', 'ADMIN'), getSubmissionById)
+// Get a specific submission by ID (users can view their own, admins/instructors can view all)
+router.get('/:submissionId', isLoggedIn, getSubmissionById)
 
 export default router

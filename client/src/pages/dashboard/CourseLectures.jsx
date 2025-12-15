@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { FaArrowLeft, FaPlay, FaPause, FaBookOpen, FaClock, FaUsers, FaCheckCircle, FaClipboardList } from "react-icons/fa";
+import { FaArrowLeft, FaPlay, FaPause, FaBookOpen, FaClock, FaUsers, FaCheckCircle, FaClipboardList, FaComments } from "react-icons/fa";
 import { FiEdit, FiTrash2, FiPlus } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Switch from "react-switch";
 
 import Footer from '../../components/Footer'
+import LectureChatModal from '../../components/LectureChatModal'
 import { deleteLecture, getLectures } from "../../redux/slices/LectureSlice";
 import { getUserProgress, updateLectureProgress } from "../../redux/slices/ProgressSlice";
 
@@ -20,6 +21,8 @@ function CourseLectures() {
     const [autoPlay, setAutoPlay] = useState(localStorage.getItem("autoPlay") === "true");
     const [watchTime, setWatchTime] = useState(0);
     const [videoRef, setVideoRef] = useState(null);
+    const [chatModalOpen, setChatModalOpen] = useState(false);
+    const [selectedLecture, setSelectedLecture] = useState(null);
     const { role } = useSelector((state) => state.auth);
 
     const handleVideoEnded = () => {
@@ -125,7 +128,7 @@ function CourseLectures() {
                         <div className="bg-gradient-to-r from-gray-800/90 to-gray-900/90 backdrop-blur-sm border-b border-gray-700/50 px-6 py-4 sticky top-0 z-20">
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-6">
-                                    <button 
+                                    <button
                                         onClick={() => navigate(-1)}
                                         className="flex items-center gap-2 text-white hover:text-yellow-400 transition-colors duration-300 bg-gray-800/50 px-4 py-2 rounded-lg"
                                     >
@@ -146,7 +149,7 @@ function CourseLectures() {
                                         </p>
                                     </div>
                                 </div>
-                                
+
                                 <div className="flex items-center gap-3">
                                     {/* Quiz navigation */}
                                     <button
@@ -180,13 +183,13 @@ function CourseLectures() {
                             <div className="mb-8">
                                 <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl">
                                     {lectures.length > 0 && currentVideo !== undefined && (
-                                        <video 
+                                        <video
                                             ref={setVideoRef}
-                                            key={lectures[currentVideo]?.lecture?.secure_url} 
-                                            controls 
-                                            autoPlay={autoPlay} 
-                                            controlsList="nodownload" 
-                                            disablePictureInPicture 
+                                            key={lectures[currentVideo]?.lecture?.secure_url}
+                                            controls
+                                            autoPlay={autoPlay}
+                                            controlsList="nodownload"
+                                            disablePictureInPicture
                                             onEnded={handleVideoEnded}
                                             onTimeUpdate={handleVideoTimeUpdate}
                                             className="w-full aspect-video object-cover"
@@ -195,7 +198,7 @@ function CourseLectures() {
                                         </video>
                                     )}
                                 </div>
-                                
+
                                 {/* Mark Complete Button */}
                                 {lectures[currentVideo] && !isLectureCompleted(lectures[currentVideo]?._id) && role !== "ADMIN" && (
                                     <div className="mt-4">
@@ -276,10 +279,9 @@ function CourseLectures() {
                                         <span>{userProgress.totalProgress}%</span>
                                     </div>
                                     <div className="w-full bg-black/20 rounded-full h-2">
-                                        <div 
-                                            className={`h-2 rounded-full transition-all duration-300 ${
-                                                userProgress.isCompleted ? 'bg-green-500' : 'bg-green-400'
-                                            }`}
+                                        <div
+                                            className={`h-2 rounded-full transition-all duration-300 ${userProgress.isCompleted ? 'bg-green-500' : 'bg-green-400'
+                                                }`}
                                             style={{ width: `${userProgress.totalProgress}%` }}
                                         ></div>
                                     </div>
@@ -290,7 +292,7 @@ function CourseLectures() {
                         {/* Add Lecture Button */}
                         {role === "ADMIN" && (
                             <div className="p-4 border-b border-gray-700/50">
-                                <button 
+                                <button
                                     onClick={() => navigate(`/course/${state?.title}/${state?._id}/lectures/addlecture`, { state: state })}
                                     className="w-full py-3 px-4 bg-gradient-to-r from-green-500 to-green-400 hover:from-green-400 hover:to-green-300 text-white rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2"
                                 >
@@ -306,21 +308,19 @@ function CourseLectures() {
                                 {lectures.map((lecture, idx) => {
                                     const completed = isLectureCompleted(lecture._id);
                                     return (
-                                        <div 
+                                        <div
                                             key={lecture._id}
-                                            className={`group relative bg-gradient-to-r ${
-                                                idx === currentVideo 
-                                                    ? 'from-yellow-500/20 to-yellow-400/20 border-yellow-500/50' 
-                                                    : 'from-gray-800/40 to-gray-900/40 border-gray-700/50 hover:border-gray-600/50'
-                                            } backdrop-blur-sm border rounded-xl p-4 cursor-pointer transition-all duration-300`}
+                                            className={`group relative bg-gradient-to-r ${idx === currentVideo
+                                                ? 'from-yellow-500/20 to-yellow-400/20 border-yellow-500/50'
+                                                : 'from-gray-800/40 to-gray-900/40 border-gray-700/50 hover:border-gray-600/50'
+                                                } backdrop-blur-sm border rounded-xl p-4 cursor-pointer transition-all duration-300`}
                                             onClick={() => handleClick(idx)}
                                         >
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-3 flex-1">
-                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                                                        completed ? 'bg-green-500 text-white' :
+                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${completed ? 'bg-green-500 text-white' :
                                                         idx === currentVideo ? 'bg-yellow-500 text-black' : 'bg-gray-700 text-white'
-                                                    }`}>
+                                                        }`}>
                                                         {completed ? (
                                                             <FaCheckCircle className="text-sm" />
                                                         ) : (
@@ -328,9 +328,8 @@ function CourseLectures() {
                                                         )}
                                                     </div>
                                                     <div className="flex-1">
-                                                        <h3 className={`font-semibold capitalize ${
-                                                            idx === currentVideo ? 'text-yellow-400' : 'text-white'
-                                                        } group-hover:text-yellow-400 transition-colors duration-300`}>
+                                                        <h3 className={`font-semibold capitalize ${idx === currentVideo ? 'text-yellow-400' : 'text-white'
+                                                            } group-hover:text-yellow-400 transition-colors duration-300`}>
                                                             {lecture?.title}
                                                         </h3>
                                                         <p className="text-gray-400 text-sm flex items-center gap-1">
@@ -341,10 +340,10 @@ function CourseLectures() {
                                                         </p>
                                                     </div>
                                                 </div>
-                                                
+
                                                 {role === "ADMIN" && (
                                                     <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                        <button 
+                                                        <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 navigate(`/course/${state?.title}/${state?._id}/lectures/editlecture`, { state: lectures[idx] });
@@ -365,6 +364,21 @@ function CourseLectures() {
                                                     </div>
                                                 )}
                                             </div>
+
+                                            {/* Talk with Lecture Button */}
+                                            {role !== "ADMIN" && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setSelectedLecture(lecture);
+                                                        setChatModalOpen(true);
+                                                    }}
+                                                    className="mt-2 w-full py-2 px-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 text-purple-300 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2"
+                                                >
+                                                    <FaComments />
+                                                    Talk with Lecture
+                                                </button>
+                                            )}
                                         </div>
                                     );
                                 })}
@@ -383,7 +397,7 @@ function CourseLectures() {
                             No lectures available yet. Start building your course content.
                         </p>
                         {role === "ADMIN" && (
-                            <button 
+                            <button
                                 onClick={() => navigate(`/course/${state?.title}/${state?._id}/lectures/addlecture`, { state: state })}
                                 className="py-3 px-6 bg-gradient-to-r from-yellow-500 to-yellow-400 hover:from-yellow-400 hover:to-yellow-300 text-black rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 mx-auto"
                             >
@@ -395,6 +409,19 @@ function CourseLectures() {
                 </div>
             )}
             <Footer />
+
+            {/* Lecture Chat Modal */}
+            {chatModalOpen && selectedLecture && (
+                <LectureChatModal
+                    isOpen={chatModalOpen}
+                    onClose={() => {
+                        setChatModalOpen(false);
+                        setSelectedLecture(null);
+                    }}
+                    lecture={selectedLecture}
+                    courseId={courseId}
+                />
+            )}
         </div>
     );
 }

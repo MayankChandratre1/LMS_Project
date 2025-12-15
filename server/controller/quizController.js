@@ -40,7 +40,7 @@ export const getQuizzesByCourse = async (req, res, next) => {
         console.log(courseId);
 
         const quizzes = await Quiz.find({ courseId }).select('-questions')
-        
+
 
         if (!quizzes.length) {
             return next(createError(404, "No quizzes found for this course"))
@@ -53,7 +53,7 @@ export const getQuizzesByCourse = async (req, res, next) => {
         })
     } catch (error) {
         console.log(error);
-        
+
         return next(createError(500, error.message))
     }
 }
@@ -121,3 +121,28 @@ export const deleteQuiz = async (req, res, next) => {
         return next(createError(500, error.message))
     }
 }
+
+export const generateQuiz = async (req, res, next) => {
+    try {
+        const { topicDescription } = req.body
+
+        if (!topicDescription || topicDescription.trim() === "") {
+            return next(createError(400, "Topic description is required"))
+        }
+
+        // Import the generateQuizQuestions function dynamically
+        const { generateQuizQuestions } = await import('../utils/gemini.js')
+
+        // Generate quiz questions using Gemini AI
+        const questions = await generateQuizQuestions(topicDescription)
+
+        res.status(200).json({
+            success: true,
+            message: "Quiz questions generated successfully",
+            questions
+        })
+    } catch (error) {
+        return next(createError(500, error.message))
+    }
+}
+

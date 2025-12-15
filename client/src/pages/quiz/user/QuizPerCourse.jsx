@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { FaArrowLeft, FaTrash, FaEdit, FaPlay } from "react-icons/fa";
+import { FaArrowLeft, FaTrash, FaEdit, FaPlay, FaClipboardList, FaHome, FaBook } from "react-icons/fa";
 import { getQuizzesByCourse, deleteQuiz } from "../../../redux/slices/QuizSlice";
 import HomeLayout from "../../../layouts/HomeLayout";
 
@@ -24,93 +24,123 @@ const QuizPerCourse = () => {
 
   return (
     <HomeLayout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-white hover:text-yellow-400 transition-colors px-4 py-2 rounded-lg bg-gray-800/50"
-          >
-            <FaArrowLeft />
-            Back
-          </button>
-          <h1 className="text-3xl font-bold text-white">Quizzes</h1>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 md:p-8">
+        {/* Breadcrumb Navigation */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2 text-sm text-gray-400">
+            <button onClick={() => navigate('/')} className="hover:text-yellow-400 flex items-center gap-1">
+              <FaHome /> Home
+            </button>
+            <span>/</span>
+            <button onClick={() => navigate('/courses')} className="hover:text-yellow-400 flex items-center gap-1">
+              <FaBook /> Courses
+            </button>
+            <span>/</span>
+            <span className="text-white">{name || 'Course'}</span>
+            <span>/</span>
+            <span className="text-white">Quizzes</span>
+          </div>
         </div>
 
-        <div className="flex justify-between items-center mb-6">
-          <p className="text-gray-300">{isLoading ? "Loading quizzes..." : `${quizzes.length} quiz(es)`}</p>
-
-          {/* quick link to user's submissions */}
-          <div className="flex items-center gap-3">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-4">
             <button
-              onClick={() => navigate('/profile/submissions')}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-white hover:text-yellow-400 transition-colors px-4 py-2 rounded-lg bg-gray-800/50"
             >
-              My Submissions
+              <FaArrowLeft />
+              Back
             </button>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-white">Quizzes for {name}</h1>
+              <p className="text-gray-400 text-sm mt-1">
+                {isLoading ? "Loading..." : `${quizzes.length} quiz${quizzes.length !== 1 ? 'es' : ''} available`}
+              </p>
+            </div>
           </div>
 
-          {role === "ADMIN" && (
-            <div className="flex gap-3">
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => navigate('/profile/submissions')}
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg flex items-center gap-2 font-semibold"
+            >
+              <FaClipboardList />
+              My Submissions
+            </button>
+
+            {role === "ADMIN" && (
               <button
                 onClick={() => navigate(`/course/${name}/${courseId}/quizes/add`)}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-400"
+                className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg hover:from-green-500 hover:to-green-400 transition-all shadow-lg font-semibold"
               >
-                Create Quiz
+                + Create Quiz
               </button>
-              <button
-                onClick={() => navigate(`/course/${name}/${courseId}/quizes`)}
-                className="px-4 py-2 bg-yellow-500 text-black rounded-lg hover:from-yellow-400"
-              >
-                Manage Quizzes
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {isLoading ? null : quizzes.length === 0 ? (
-          <div className="text-center text-gray-300 py-12">No quizzes available for this course.</div>
+        {/* Quiz List */}
+        {isLoading ? (
+          <div className="text-center text-gray-300 py-12">Loading quizzes...</div>
+        ) : quizzes.length === 0 ? (
+          <div className="bg-gray-800/50 rounded-2xl border border-gray-700 p-12 text-center">
+            <div className="text-gray-300 text-lg mb-4">No quizzes available for this course yet.</div>
+            {role === "ADMIN" && (
+              <button
+                onClick={() => navigate(`/course/${name}/${courseId}/quizes/add`)}
+                className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-400 transition-colors font-semibold"
+              >
+                Create First Quiz
+              </button>
+            )}
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {quizzes.map((q) => (
-              <div key={q._id} className="bg-gray-800 p-4 rounded-lg shadow-lg hover:bg-gray-700 transition-all">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h2 className="text-xl font-bold text-white mb-1">{q.title}</h2>
-                    <p className="text-gray-400 text-sm mb-2">{q.description}</p>
-                    <p className="text-xs text-gray-500">Created: {new Date(q.createdAt || "").toLocaleString()}</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <button
-                      onClick={() => navigate(`/course/${name}/${courseId}/quizes/${q._id}/take`)}
-                      className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md flex items-center gap-2 text-sm"
-                    >
-                      <FaPlay /> Take
-                    </button>
+              <div
+                key={q._id}
+                className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl border border-gray-700 p-6 hover:border-gray-600 transition-all hover:shadow-xl"
+              >
+                <div className="mb-4">
+                  <h2 className="text-xl font-bold text-white mb-2">{q.title}</h2>
+                  <p className="text-gray-400 text-sm mb-3 line-clamp-2">{q.description}</p>
 
-                    {role === "ADMIN" && (
-                      <>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => navigate(`/admin/${name}/${courseId}/quizes/${q._id}`)}
-                            className="px-3 py-2 bg-yellow-500 hover:bg-yellow-400 text-black rounded-md text-sm flex items-center gap-2"
-                          >
-                            <FaEdit /> Edit
-                          </button>
-                          <button
-                            onClick={() => onDelete(q._id)}
-                            className="px-3 py-2 bg-red-600 hover:bg-red-500 text-white rounded-md text-sm flex items-center gap-2"
-                          >
-                            <FaTrash /> Delete
-                          </button>
-                        </div>
-                      </>
-                    )}
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <span>{q.questions?.length || 0} questions</span>
+                    <span>•</span>
+                    <span>{new Date(q.createdAt || "").toLocaleDateString()}</span>
                   </div>
                 </div>
-                {/* small footer */}
-                <div className="flex justify-between items-center mt-3">
-                  <div className="text-xs text-gray-400">Questions: {q.questions?.length || 0}</div>
-                  <div className="text-xs text-gray-400">Course: {name}</div>
+
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => navigate(`/course/${name}/${courseId}/quizes/${q._id}/take`)}
+                    className="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black rounded-lg flex items-center justify-center gap-2 text-sm font-bold transition-all shadow-lg"
+                  >
+                    <FaPlay />
+                    Take Quiz
+                  </button>
+
+                  {role === "ADMIN" && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => navigate(`/admin/${name}/${courseId}/quizes/${q._id}`)}
+                        className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm flex items-center justify-center gap-2 transition-colors"
+                      >
+                        <FaEdit />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => onDelete(q._id)}
+                        className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm flex items-center justify-center gap-2 transition-colors"
+                      >
+                        <FaTrash />
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

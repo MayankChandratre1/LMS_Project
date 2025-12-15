@@ -4,14 +4,18 @@ import {
     getQuizzesByCourse,
     getQuizById,
     updateQuiz,
-    deleteQuiz
+    deleteQuiz,
+    generateQuiz
 } from '../controller/quizController.js'
 import { isLoggedIn, authorizedRole } from '../middleware/authMiddleware.js'
 
 const router = Router()
 
+// Generate quiz questions using AI (only instructors and admins)
+router.post('/generate', isLoggedIn, authorizedRole('INSTRUCTOR', 'ADMIN'), generateQuiz)
+
 // Create a quiz (only instructors)
-router.post('/', isLoggedIn, authorizedRole('INSTRUCTOR','ADMIN'), createQuiz)
+router.post('/', isLoggedIn, authorizedRole('INSTRUCTOR', 'ADMIN'), createQuiz)
 
 // Get all quizzes for a course
 router.get('/course/:courseId', isLoggedIn, getQuizzesByCourse)
@@ -20,9 +24,9 @@ router.get('/course/:courseId', isLoggedIn, getQuizzesByCourse)
 router.get('/:quizId', isLoggedIn, getQuizById)
 
 // Update a quiz (only instructors)
-router.put('/:quizId', isLoggedIn, authorizedRole('INSTRUCTOR','ADMIN'), updateQuiz)
+router.put('/:quizId', isLoggedIn, authorizedRole('INSTRUCTOR', 'ADMIN'), updateQuiz)
 
 // Delete a quiz (only instructors)
-router.delete('/:quizId', isLoggedIn, authorizedRole('INSTRUCTOR','ADMIN'), deleteQuiz)
+router.delete('/:quizId', isLoggedIn, authorizedRole('INSTRUCTOR', 'ADMIN'), deleteQuiz)
 
 export default router

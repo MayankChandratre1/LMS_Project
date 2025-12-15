@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FaArrowLeft } from "react-icons/fa";
-import { createQuiz } from "../../redux/slices/QuizSlice";
+import { FaArrowLeft, FaMagic } from "react-icons/fa";
+import { createQuiz, generateQuiz } from "../../redux/slices/QuizSlice";
 
 const CreateQuiz = () => {
     const { name, id: courseId } = useParams();
@@ -22,6 +22,9 @@ const CreateQuiz = () => {
             },
         ],
     });
+
+    const [topicDescription, setTopicDescription] = useState("");
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -58,6 +61,29 @@ const CreateQuiz = () => {
         }
     };
 
+    const handleGenerateQuiz = async () => {
+        if (!topicDescription.trim()) {
+            toast.error("Please enter a topic description");
+            return;
+        }
+
+        setIsGenerating(true);
+        try {
+            const response = await dispatch(generateQuiz(topicDescription));
+            if (response?.payload) {
+                setQuizData((prev) => ({
+                    ...prev,
+                    questions: response.payload,
+                }));
+                setTopicDescription(""); // Clear topic description after generation
+            }
+        } catch (error) {
+            console.error("Error generating quiz:", error);
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
             <div className="flex items-center gap-4 mb-6">
@@ -71,6 +97,47 @@ const CreateQuiz = () => {
                 <h1 className="text-3xl font-bold text-white">Create Quiz for {name}</h1>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
+                {/* AI Quiz Generation Section */}
+                <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 p-6 rounded-lg border border-purple-500/30">
+                    <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-2">
+                        <FaMagic className="text-yellow-400" />
+                        Generate Quiz with AI
+                    </h2>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-gray-300 mb-2">
+                                Topic Description
+                            </label>
+                            <textarea
+                                value={topicDescription}
+                                onChange={(e) => setTopicDescription(e.target.value)}
+                                className="w-full p-3 rounded-lg bg-gray-800 text-white min-h-[100px]"
+                                placeholder="Describe the topic for your quiz (e.g., 'JavaScript Promises and Async/Await', 'Introduction to Machine Learning', etc.)"
+                                disabled={isGenerating}
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            onClick={handleGenerateQuiz}
+                            disabled={isGenerating}
+                            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        >
+                            {isGenerating ? (
+                                <>
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    Generating...
+                                </>
+                            ) : (
+                                <>
+                                    <FaMagic />
+                                    Generate Quiz Questions
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Manual Quiz Creation Section */}
                 <div>
                     <label className="block text-gray-300 mb-2">Quiz Title</label>
                     <input

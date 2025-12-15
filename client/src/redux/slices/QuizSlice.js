@@ -21,7 +21,7 @@ export const createQuiz = createAsyncThunk("/quiz/create", async (data) => {
 export const getQuizzesByCourse = createAsyncThunk("/quiz/course", async (courseId) => {
     try {
         const response = axiosInstance.get(`/quiz/course/${courseId}`);
-        
+
         return (await response).data.quizzes;
     } catch (error) {
         toast.error(error?.response?.data?.message || "Failed to fetch quizzes");
@@ -57,6 +57,17 @@ export const deleteQuiz = createAsyncThunk("/quiz/delete", async (quizId) => {
     }
 });
 
+export const generateQuiz = createAsyncThunk("/quiz/generate", async (topicDescription) => {
+    try {
+        const response = await axiosInstance.post("/quiz/generate", { topicDescription });
+        toast.success(response?.data?.message || "Quiz generated successfully");
+        return response.data.questions;
+    } catch (error) {
+        toast.error(error?.response?.data?.message || "Failed to generate quiz");
+        throw error;
+    }
+});
+
 const quizSlice = createSlice({
     name: "quiz",
     initialState,
@@ -73,7 +84,7 @@ const quizSlice = createSlice({
             })
             .addCase(getQuizzesByCourse.fulfilled, (state, action) => {
                 console.log(action.payload);
-                
+
                 state.isLoading = false;
                 state.quizzes = action.payload || [];
             })

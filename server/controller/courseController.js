@@ -4,6 +4,7 @@ import { v2 } from 'cloudinary'
 import fs from 'fs/promises'
 import { myCache } from '../app.js';
 import Progress from '../models/progressModel.js'
+import { transcribeVideo } from '../utils/assemblyai.js'
 
 export const getAllCourses = async (req, res, next) => {
     try {
@@ -33,7 +34,7 @@ export const createCourse = async (req, res, next) => {
         if (!title || !description || !category || !createdBy) {
             return next(createError(400, "Please enter all input fields"))
         }
-        
+
         const newCourse = new Course({
             title,
             description,
@@ -62,12 +63,12 @@ export const createCourse = async (req, res, next) => {
         if (req.file) {
             try {
                 const b64 = Buffer.from(req.file.buffer).toString('base64');
-        const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+                const dataURI = `data:${req.file.mimetype};base64,${b64}`;
                 const result = await v2.uploader.upload(dataURI, {
                     resource_type: 'image',
                     folder: 'lms'
                 })
-                console.log(`File:  `,req.file);
+                console.log(`File:  `, req.file);
                 if (result) {
                     newCourse.thumbnail.public_id = result.public_id
                     newCourse.thumbnail.secure_url = result.secure_url
@@ -104,7 +105,7 @@ export const updateCourse = async (req, res, next) => {
         if (req.file) {
             try {
                 const b64 = Buffer.from(req.file.buffer).toString('base64');
-        const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+                const dataURI = `data:${req.file.mimetype};base64,${b64}`;
                 await v2.uploader.destroy(course.thumbnail.public_id, {
                     resource_type: 'image'
                 })
@@ -115,7 +116,7 @@ export const updateCourse = async (req, res, next) => {
                 if (result) {
                     course.thumbnail.public_id = result.public_id
                     course.thumbnail.secure_url = result.secure_url
-                    
+
                 }
             } catch (error) {
                 return next(createError(500, error.message || "file upload failed"));
@@ -160,7 +161,7 @@ export const getLectures = async (req, res, next) => {
     try {
         const { id } = req.params;
         const userId = req.user?.id; // Check if user is logged in
-        
+
         let lectures;
         if (false) {
             lectures = JSON.parse(myCache.get("lectures"));
@@ -225,7 +226,7 @@ export const addLecturesToCourse = async (req, res, next) => {
         if (req.file) {
             try {
                 const b64 = Buffer.from(req.file.buffer).toString('base64');
-        const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+                const dataURI = `data:${req.file.mimetype};base64,${b64}`;
                 const result = await v2.uploader.upload(dataURI, {
                     resource_type: 'video',
                     folder: 'lms'
@@ -234,7 +235,24 @@ export const addLecturesToCourse = async (req, res, next) => {
                     lectureData.lecture.public_id = result.public_id
                     lectureData.lecture.secure_url = result.secure_url
 
-                    
+                    // Get video duration from Cloudinary response
+                    lectureData.duration = result.duration || 0
+
+                    // Transcribe if video is under 1000 seconds
+                    if (lectureData.duration > 0 && lectureData.duration < 1000) {
+                        try {
+                            console.log(`📹 Video duration: ${lectureData.duration}s - Starting transcription...`)
+                            const transcript = await transcribeVideo(result.secure_url)
+                            lectureData.transcript = transcript
+                            console.log(`✅ Transcript generated successfully (${transcript.length} characters)`)
+                        } catch (transcriptError) {
+                            console.error('⚠️  Transcription failed:', transcriptError.message)
+                            // Continue without transcript - don't fail the entire request
+                            lectureData.transcript = ''
+                        }
+                    } else {
+                        console.log(`⏭️  Video duration ${lectureData.duration}s - Skipping transcription (>1000s or duration unknown)`)
+                    }
                 }
             } catch (error) {
                 return next(createError(500, error.message || "file upload failed"))
@@ -284,7 +302,7 @@ export const updateLectures = async (req, res, next) => {
                     }
                 )
                 const b64 = Buffer.from(req.file.buffer).toString('base64');
-        const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+                const dataURI = `data:${req.file.mimetype};base64,${b64}`;
                 const result = await v2.uploader.upload(dataURI, {
                     resource_type: 'video',
                     folder: 'lms'
@@ -293,7 +311,7 @@ export const updateLectures = async (req, res, next) => {
                     lectureToUpdate.lecture.public_id = result.public_id
                     lectureToUpdate.lecture.secure_url = result.secure_url
 
-                    
+
                 }
             } catch (error) {
                 return next(createError(500, error.message || "file upload failed"))

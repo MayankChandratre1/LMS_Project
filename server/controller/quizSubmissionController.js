@@ -102,6 +102,8 @@ export const getQuizSubmissions = async (req, res, next) => {
 export const getSubmissionById = async (req, res, next) => {
     try {
         const { submissionId } = req.params
+        const userId = req.user.id
+        const userRole = req.user.role
 
         const submission = await QuizSubmission.findById(submissionId)
             .populate('quizId', 'title')
@@ -110,6 +112,14 @@ export const getSubmissionById = async (req, res, next) => {
 
         if (!submission) {
             return next(createError(404, "Submission not found"))
+        }
+
+        // Allow access if user is admin/instructor OR if submission belongs to the user
+        const isOwner = submission.userId._id.toString() === userId.toString()
+        const isAdminOrInstructor = userRole === 'ADMIN' || userRole === 'INSTRUCTOR'
+
+        if (!isOwner && !isAdminOrInstructor) {
+            return next(createError(403, "You don't have permission to view this submission"))
         }
 
         res.status(200).json({

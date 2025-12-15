@@ -21,6 +21,11 @@ const courseSchema = new Schema({
         type: String,
         required: [true, 'Category is required']
     },
+    language: {
+        type: String,
+        default: 'en',
+        lowercase: true
+    },
     thumbnail: {
         public_id: {
             type: String,
@@ -35,6 +40,8 @@ const courseSchema = new Schema({
         {
             title: String,
             description: String,
+            duration: Number, // Video duration in seconds
+            transcript: String, // AssemblyAI transcript
             lecture: {
                 public_id: {
                     type: String,
